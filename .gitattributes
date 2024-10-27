@@ -1,0 +1,2 @@
+# Definindo o padrão de quebras de linha para CRLF
+* text=auto eol=crlf
