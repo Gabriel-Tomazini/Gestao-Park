@@ -8,8 +8,11 @@ export default function CadastroForm() {
         <input type="text" placeholder="Nome" style={styles.input} />
         <input type="text" placeholder="CPF" style={styles.input} />
         <input type="text" placeholder="Telefone" style={styles.input} />
-        <input type="text" placeholder="Telefone" style={styles.input} /> {/* Duplicado conforme a imagem */}
-        <button type="submit" style={styles.button}>Cadastrar</button>
+        <input type="text" placeholder="Telefone" style={styles.input} />{" "}
+        {/* Duplicado conforme a imagem */}
+        <button type="submit" style={styles.button}>
+          Cadastrar
+        </button>
       </form>
       <div style={styles.footerText}>Preencha todos os campos</div>
     </div>
@@ -23,6 +26,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: "center",
     justifyContent: "center",
     height: "60vh",
+    width: "60vh",
     padding: "20px",
     backgroundColor: "#E0EBF5",
     borderRadius: "8px",
