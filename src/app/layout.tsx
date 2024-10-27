@@ -15,7 +15,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Park Ease",
+  title: "Gestão Park",
   description: "Controle de estacionamento",
 };
 

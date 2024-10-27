@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
-import { useEffect, useState } from "react";
+import { TabelaRegistros } from "./conponents/listarRegistros"; // Corrigido o caminho
 
-export default function RegistroEntradaSaidaForm() {
+// Formulário para Registro de Entrada e Saída
+function RegistroEntradaSaidaForm() {
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Registrar de Entrada de Veículos</h2>
@@ -29,76 +30,11 @@ export default function RegistroEntradaSaidaForm() {
   );
 }
 
-interface Registro {
-  pessoa_id: number; // Adicione este campo se estiver usando na tabela
-  veiculo_id: number; // Adicione este campo se estiver usando na tabela
-  placa: string;
-  modelo: string;
-  nome: string; // Nome do Dono
-  data_entrada: string;
-  data_saida: string | null;
-}
-
-export function TabelaRegistros() {
-  const [registros, setRegistros] = useState<Registro[]>([]);
-
-  // Função para buscar os registros do banco via API
-  const fetchRegistros = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/api/carro");
-      const data = await response.json();
-
-      console.log("Dados recebidos:", data); // Verifique a resposta da API
-
-      // Verifique se data é um array
-      if (Array.isArray(data)) {
-        setRegistros(data);
-      } else {
-        console.error("Os dados recebidos não são um array:", data);
-        setRegistros([]); // Define como array vazio se não for um array
-      }
-    } catch (error) {
-      console.error("Erro ao buscar registros:", error);
-      setRegistros([]); // Define como array vazio em caso de erro
-    }
-  };
-
-  useEffect(() => {
-    fetchRegistros();
-  }, []);
-
+// Componente para exibir a Tabela de Veículos
+function VehicleTable() {
   return (
-    <div className="table-container">
-      <table className="registro-tabela">
-        <thead>
-          <tr>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Dono</th>
-            <th>Entrada</th>
-            <th>Saída</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Array.isArray(registros) && registros.length > 0 ? (
-            registros.map((registro) => (
-              <tr key={registro.veiculo_id}>
-                {" "}
-                {/* Mudei para usar veiculo_id como chave */}
-                <td>{registro.placa}</td>
-                <td>{registro.modelo}</td>
-                <td>{registro.nome}</td>
-                <td>{registro.data_entrada}</td>
-                <td>{registro.data_saida || "Ainda no estacionamento"}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={5}>Nenhum registro encontrado.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+    <div style={styles.containerRegistro}>
+      <TabelaRegistros />
     </div>
   );
 }
@@ -110,7 +46,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: "center",
     justifyContent: "center",
     height: "80vh",
-    width: "70vh",
+    width: "90%",
     padding: "20px",
     backgroundColor: "#E0EBF5",
     borderRadius: "8px",
@@ -152,4 +88,19 @@ const styles: { [key: string]: React.CSSProperties } = {
   buttonHover: {
     backgroundColor: "#357ABD",
   },
+  containerRegistro: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "80vh",
+    width: "90%",
+    padding: "20px",
+    backgroundColor: "#E0EBF5",
+    borderRadius: "8px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  },
 };
+
+// Exporte os componentes de forma nomeada
+export { RegistroEntradaSaidaForm, VehicleTable };
