@@ -3,13 +3,13 @@
 import React, { useEffect, useState } from "react";
 
 interface Registro {
-  pessoa_id: number;
-  veiculo_id: number;
-  placa: string;
-  modelo: string;
+  id: number;
   nome: string;
-  cor: string;
+  cpf: string;
   telefone: string;
+  endereco: string;
+  descricao: string;
+  valor: number;
 }
 
 export function TabelaRegistros() {
@@ -19,7 +19,7 @@ export function TabelaRegistros() {
 
   const fetchRegistros = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/listaCarros");
+      const response = await fetch("http://localhost:3000/api/cadastroPessoa");
       const data = await response.json();
       setRegistros(data);
     } catch (error) {
@@ -39,12 +39,20 @@ export function TabelaRegistros() {
     );
   };
 
+  const formatarCPF = (cpf: string) => {
+    const apenasNumeros = cpf.replace(/\D/g, "");
+    return apenasNumeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  };
+
   const iniciarEdicao = (registro: Registro) => {
-    setEditando(registro.veiculo_id);
+    setEditando(registro.id);
     setValoresEditados({
-      placa: registro.placa,
-      modelo: registro.modelo,
-      cor: registro.cor,
+      nome: registro.nome,
+      cpf: registro.cpf,
+      telefone: registro.telefone,
+      endereco: registro.endereco,
+      descricao: registro.descricao,
+      valor: registro.valor,
     });
   };
 
@@ -55,14 +63,13 @@ export function TabelaRegistros() {
 
   const salvarEdicao = async (id: number) => {
     const novoRegistro = {
-      veiculo_id: id,
-      placa: valoresEditados.placa || "",
-      modelo: valoresEditados.modelo || "",
-      cor: valoresEditados.cor || "",
+      id: id,
+      ...valoresEditados,
     };
 
     try {
-      const response = await fetch("http://localhost:3000/api/listaCarros", {
+      console.log("TO aqui caralho", JSON.stringify(novoRegistro));
+      const response = await fetch("http://localhost:3000/api/cadastroPessoa", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -73,6 +80,7 @@ export function TabelaRegistros() {
       if (response.ok) {
         alert("Registro atualizado com sucesso!");
         fetchRegistros(); // Recarrega a lista de registros após o update
+        console.log("Cheguei");
       } else {
         alert("Erro ao atualizar o registro.");
       }
@@ -85,20 +93,19 @@ export function TabelaRegistros() {
     }
   };
 
-  const excluirRegistro = async (veiculo_id: number) => {
+  const excluirRegistro = async (id: number) => {
     try {
-      const response = await fetch("http://localhost:3000/api/listaCarros", {
+      const response = await fetch("http://localhost:3000/api/cadastroPessoa", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ veiculo_id }),
+        body: JSON.stringify({ id }),
       });
 
       if (response.ok) {
         alert("Registro excluído com sucesso!");
-        // Recarregar a lista de registros
-        fetchRegistros();
+        fetchRegistros(); // Recarregar a lista de registros
       } else {
         console.error("Erro ao excluir registro:", await response.json());
       }
@@ -117,11 +124,12 @@ export function TabelaRegistros() {
       <table style={styles.table}>
         <thead>
           <tr>
-            <th style={styles.headerCell}>Placa</th>
-            <th style={styles.headerCell}>Modelo</th>
-            <th style={styles.headerCell}>Cor</th>
-            <th style={styles.headerCell}>Dono</th>
+            <th style={styles.headerCell}>Nome</th>
+            <th style={styles.headerCell}>CPF</th>
             <th style={styles.headerCell}>Telefone</th>
+            <th style={styles.headerCell}>Endereço</th>
+            <th style={styles.headerCell}>Tipo Valor</th>
+            <th style={styles.headerCell}>Valor</th>
             <th style={styles.headerCell}>Ações</th>
           </tr>
         </thead>
@@ -129,57 +137,73 @@ export function TabelaRegistros() {
           {Array.isArray(registros) && registros.length > 0 ? (
             registros.map((registro) => (
               <tr
-                key={registro.veiculo_id}
-                style={editando === registro.veiculo_id ? styles.editRow : {}}
+                key={registro.id}
+                style={editando === registro.id ? styles.editRow : {}}
               >
                 <td style={styles.cell}>
-                  {editando === registro.veiculo_id ? (
+                  {editando === registro.id ? (
                     <input
                       type="text"
-                      name="placa"
-                      value={valoresEditados.placa || ""}
+                      name="nome"
+                      value={valoresEditados.nome || ""}
                       onChange={handleInputChange}
                       style={styles.input}
                     />
                   ) : (
-                    registro.placa.toUpperCase()
+                    registro.nome
                   )}
                 </td>
                 <td style={styles.cell}>
-                  {editando === registro.veiculo_id ? (
+                  {editando === registro.id ? (
                     <input
                       type="text"
-                      name="modelo"
-                      value={valoresEditados.modelo || ""}
+                      name="cpf"
+                      value={valoresEditados.cpf || ""}
                       onChange={handleInputChange}
                       style={styles.input}
                     />
                   ) : (
-                    registro.modelo
+                    formatarCPF(registro.cpf)
                   )}
                 </td>
                 <td style={styles.cell}>
-                  {editando === registro.veiculo_id ? (
+                  {editando === registro.id ? (
                     <input
                       type="text"
-                      name="cor"
-                      value={valoresEditados.cor || ""}
+                      name="telefone"
+                      value={valoresEditados.telefone || ""}
                       onChange={handleInputChange}
                       style={styles.input}
                     />
                   ) : (
-                    registro.cor
+                    formatarTelefone(registro.telefone)
                   )}
                 </td>
-                <td style={styles.cell}>{registro.nome}</td>
                 <td style={styles.cell}>
-                  {formatarTelefone(registro.telefone)}
+                  {editando === registro.id ? (
+                    <input
+                      type="text"
+                      name="Endereço"
+                      value={valoresEditados.endereco || ""}
+                      onChange={handleInputChange}
+                      style={styles.input}
+                    />
+                  ) : (
+                    registro.endereco
+                  )}
                 </td>
                 <td style={styles.cell}>
-                  {editando === registro.veiculo_id ? (
+                  {registro.descricao || "Não informado"}
+                </td>
+                <td style={styles.cell}>
+                  {registro.valor != null ? registro.valor : "Não informado"}
+                </td>
+
+                <td style={styles.cell}>
+                  {editando === registro.id ? (
                     <>
                       <button
-                        onClick={() => salvarEdicao(registro.veiculo_id)}
+                        onClick={() => salvarEdicao(registro.id)}
                         style={styles.saveButton}
                       >
                         Salvar
@@ -200,7 +224,7 @@ export function TabelaRegistros() {
                         Editar
                       </button>
                       <button
-                        onClick={() => excluirRegistro(registro.veiculo_id)}
+                        onClick={() => excluirRegistro(registro.id)}
                         style={styles.deleteButton}
                       >
                         Excluir
@@ -211,11 +235,7 @@ export function TabelaRegistros() {
               </tr>
             ))
           ) : (
-            <tr>
-              <td style={styles.cell} colSpan={6}>
-                Nenhum registro encontrado.
-              </td>
-            </tr>
+            <tr></tr>
           )}
         </tbody>
       </table>

@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { TabelaRegistros } from "./conponents/listarRegistros"; // Corrigido o caminho
+import { TabelaRegistros } from "./components/listaValores"; // Verifique o caminho correto para o arquivo listarPessoa
 
-// Formulário para Registro de Entrada e Saída
-export default function RegistroEntradaSaidaForm() {
-  const [placa, setPlaca] = useState("");
-  const [dataEntrada, setDataEntrada] = useState("");
-
+export default function CadastroForm() {
+  const [descricao, setDescricao] = useState("");
+  const [valor, setValor] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -15,18 +13,18 @@ export default function RegistroEntradaSaidaForm() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/api/listaRegistro", {
+      const response = await fetch("http://localhost:3000/api/tipoValores", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ placa, dataEntrada }),
+        body: JSON.stringify({ descricao, valor }),
       });
 
       if (response.ok) {
         alert("Cadastro realizado com sucesso!");
-        setPlaca("");
-        setDataEntrada("");
+        setDescricao("");
+        setValor("");
       } else {
         alert("Erro ao realizar o cadastro. Tente novamente.");
       }
@@ -40,36 +38,35 @@ export default function RegistroEntradaSaidaForm() {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.title}>Registrar de Entrada de Veículos</h2>
+      <h2 style={styles.title}>Cadastro</h2>
       <form style={styles.form} onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Placa"
+          placeholder="Descrição"
           style={styles.input}
-          value={placa}
-          onChange={(e) => setPlaca(e.target.value)}
+          value={descricao}
+          onChange={(e) => setDescricao(e.target.value)}
           required
-        />{" "}
-        <input
-          type="datetime-local"
-          placeholder="Data/Hora Entrada"
-          style={styles.input}
-          value={dataEntrada}
-          onChange={(e) => setDataEntrada(e.target.value)}
         />
-        <button type="submit" style={styles.button}>
-          Registrar
-        </button>
+        <input
+          type="text"
+          placeholder="Valor"
+          style={styles.input}
+          value={valor}
+          onChange={(e) => setValor(e.target.value)}
+          required
+        />
         <button type="submit" style={styles.button} disabled={loading}>
           {loading ? "Cadastrando..." : "Cadastrar"}
         </button>
       </form>
+      <div style={styles.footerText}>Preencha todos os campos</div>
     </div>
   );
 }
 
-// Componente para exibir a Tabela de Veículos
-function VehicleTable() {
+function PessoaTable() {
+  // Teste básico para verificar se o componente está sendo renderizado
   return (
     <div style={styles.containerRegistro}>
       <TabelaRegistros />
@@ -123,8 +120,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: "pointer",
     transition: "background-color 0.3s",
   },
-  buttonHover: {
-    backgroundColor: "#357ABD",
+  footerText: {
+    marginTop: "20px",
+    fontSize: "16px",
+    color: "#888",
+    textAlign: "center",
   },
   containerRegistro: {
     display: "flex",
@@ -140,5 +140,4 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-// Exporte os componentes de forma nomeada
-export { RegistroEntradaSaidaForm, VehicleTable };
+export { CadastroForm, PessoaTable };

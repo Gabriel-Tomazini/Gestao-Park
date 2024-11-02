@@ -17,7 +17,7 @@ const styles: { [key: string]: CSSProperties } = {
     alignItems: "center",
     justifyContent: "center",
     height: "80vh",
-    width: "90%",
+    width: "70%",
     padding: "20px",
     backgroundColor: "#E0EBF5",
     borderRadius: "8px",

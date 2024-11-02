@@ -21,6 +21,9 @@ const SideMenu = () => {
   const pageHome = () => {
     router.push(AppUtils.HOME_PATH);
   };
+  const pageValores = () => {
+    router.push(AppUtils.VALORES_PATH);
+  };
 
   return (
     <aside style={styles.menu}>
@@ -32,7 +35,7 @@ const SideMenu = () => {
         </li>
         <li style={styles.listItem}>
           <button style={styles.button} onClick={pageListaCarro}>
-            Listar veículo
+            veículo
           </button>
         </li>
         <li style={styles.listItem}>
@@ -48,6 +51,11 @@ const SideMenu = () => {
         <li style={styles.listItem}>
           <button style={styles.button} onClick={pageCadastroCarro}>
             Cadastrar veículo
+          </button>
+        </li>
+        <li style={styles.listItem}>
+          <button style={styles.button} onClick={pageValores}>
+            Cadastros valores
           </button>
         </li>
       </ul>

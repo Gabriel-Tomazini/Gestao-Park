@@ -1,13 +1,10 @@
-"use client";
-
 import React, { useState } from "react";
-import { TabelaRegistros } from "./conponents/listarRegistros"; // Corrigido o caminho
 
-// Formulário para Registro de Entrada e Saída
-export default function RegistroEntradaSaidaForm() {
-  const [placa, setPlaca] = useState("");
-  const [dataEntrada, setDataEntrada] = useState("");
-
+export default function CadastroForm() {
+  const [placa, setplaca] = useState("");
+  const [modelo, setModelo] = useState("");
+  const [cor, setCor] = useState("");
+  const [pessoa_id, setPessoaId] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -15,18 +12,20 @@ export default function RegistroEntradaSaidaForm() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/api/listaRegistro", {
+      const response = await fetch("http://localhost:3000/api/cadastroCarro", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ placa, dataEntrada }),
+        body: JSON.stringify({ placa, modelo, cor, pessoa_id }),
       });
 
       if (response.ok) {
         alert("Cadastro realizado com sucesso!");
-        setPlaca("");
-        setDataEntrada("");
+        setplaca("");
+        setModelo("");
+        setCor("");
+        setPessoaId("");
       } else {
         alert("Erro ao realizar o cadastro. Tente novamente.");
       }
@@ -40,39 +39,45 @@ export default function RegistroEntradaSaidaForm() {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.title}>Registrar de Entrada de Veículos</h2>
+      <h2 style={styles.title}>Cadastro</h2>
       <form style={styles.form} onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Placa"
           style={styles.input}
           value={placa}
-          onChange={(e) => setPlaca(e.target.value)}
+          onChange={(e) => setplaca(e.target.value)}
           required
-        />{" "}
-        <input
-          type="datetime-local"
-          placeholder="Data/Hora Entrada"
-          style={styles.input}
-          value={dataEntrada}
-          onChange={(e) => setDataEntrada(e.target.value)}
         />
-        <button type="submit" style={styles.button}>
-          Registrar
-        </button>
+        <input
+          type="text"
+          placeholder="Modelo"
+          style={styles.input}
+          value={modelo}
+          onChange={(e) => setModelo(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="cor"
+          style={styles.input}
+          value={cor}
+          onChange={(e) => setCor(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Código do dono"
+          style={styles.input}
+          value={pessoa_id}
+          onChange={(e) => setPessoaId(e.target.value)}
+          required
+        />
         <button type="submit" style={styles.button} disabled={loading}>
           {loading ? "Cadastrando..." : "Cadastrar"}
         </button>
       </form>
-    </div>
-  );
-}
-
-// Componente para exibir a Tabela de Veículos
-function VehicleTable() {
-  return (
-    <div style={styles.containerRegistro}>
-      <TabelaRegistros />
+      <div style={styles.footerText}>Preencha todos os campos</div>
     </div>
   );
 }
@@ -83,8 +88,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    height: "80vh",
-    width: "90%",
+    height: "60vh",
     padding: "20px",
     backgroundColor: "#E0EBF5",
     borderRadius: "8px",
@@ -112,6 +116,28 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: "100%",
     boxSizing: "border-box",
   },
+  inlineInputs: {
+    display: "flex",
+    gap: "10px",
+  },
+  smallInput: {
+    padding: "12px",
+    fontSize: "16px",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+    backgroundColor: "#fff",
+    width: "30%", // Reduzido para ocupar menos espaço
+    boxSizing: "border-box",
+  },
+  largeInput: {
+    padding: "12px",
+    fontSize: "16px",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+    backgroundColor: "#fff",
+    width: "70%", // Aumentado para ocupar mais espaço
+    boxSizing: "border-box",
+  },
   button: {
     padding: "12px",
     fontSize: "16px",
@@ -126,19 +152,4 @@ const styles: { [key: string]: React.CSSProperties } = {
   buttonHover: {
     backgroundColor: "#357ABD",
   },
-  containerRegistro: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "80vh",
-    width: "90%",
-    padding: "20px",
-    backgroundColor: "#E0EBF5",
-    borderRadius: "8px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-  },
 };
-
-// Exporte os componentes de forma nomeada
-export { RegistroEntradaSaidaForm, VehicleTable };
