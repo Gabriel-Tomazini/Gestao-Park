@@ -40,26 +40,19 @@ export function TabelaValorRotativo() {
   };
 
   const salvarEdicao = async (id_estacionamento_rotativo: number) => {
-    const novoRegistro = {
-      id_estacionamento_rotativo: id_estacionamento_rotativo,
-      ...valoresEditados,
-    };
-
+    const novoRegistro = { id_estacionamento_rotativo, ...valoresEditados };
     try {
       const response = await fetch(
         "http://localhost:3000/api/valoresRotativo",
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(novoRegistro),
         },
       );
-
       if (response.ok) {
         alert("Registro atualizado com sucesso!");
-        window.location.reload(); // Recarrega a página após o update
+        fetchRegistros(); // Recarrega a lista de registros após o update
       } else {
         alert("Erro ao atualizar o registro.");
       }
@@ -70,8 +63,6 @@ export function TabelaValorRotativo() {
       setEditando(null);
       setValoresEditados({});
     }
-    fetchRegistros(); // Recarrega a lista de registros após o update
-    window.location.reload(); // Recarrega a página após o update
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

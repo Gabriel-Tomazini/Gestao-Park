@@ -48,7 +48,6 @@ export function TabelaMensalidades() {
     };
 
     try {
-      console.log("TO aqui caralho", JSON.stringify(novoRegistro));
       const response = await fetch("http://localhost:3000/api/tipoValores", {
         method: "PUT",
         headers: {
@@ -60,7 +59,6 @@ export function TabelaMensalidades() {
       if (response.ok) {
         alert("Registro atualizado com sucesso!");
         fetchRegistros(); // Recarrega a lista de registros após o update
-        console.log("Cheguei");
       } else {
         alert("Erro ao atualizar o registro.");
       }

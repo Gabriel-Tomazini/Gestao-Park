@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { apiUrls } from "../../config/config";
 
 interface Registro {
   pessoa_id: number;
@@ -19,7 +20,7 @@ export function TabelaRegistros() {
 
   const fetchRegistros = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/listaCarros");
+      const response = await fetch(apiUrls.veiculos);
       const data = await response.json();
       setRegistros(data);
     } catch (error) {
@@ -62,7 +63,7 @@ export function TabelaRegistros() {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/api/listaCarros", {
+      const response = await fetch(apiUrls.veiculos, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -87,7 +88,7 @@ export function TabelaRegistros() {
 
   const excluirRegistro = async (veiculo_id: number) => {
     try {
-      const response = await fetch("http://localhost:3000/api/listaCarros", {
+      const response = await fetch(apiUrls.veiculos, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
