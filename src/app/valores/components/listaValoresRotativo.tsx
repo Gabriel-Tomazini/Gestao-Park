@@ -70,6 +70,8 @@ export function TabelaValorRotativo() {
       setEditando(null);
       setValoresEditados({});
     }
+    fetchRegistros(); // Recarrega a lista de registros após o update
+    window.location.reload(); // Recarrega a página após o update
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

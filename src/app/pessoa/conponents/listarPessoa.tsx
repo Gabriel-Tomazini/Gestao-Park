@@ -263,12 +263,13 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   headerCell: {
     padding: "10px 15px",
-    fontWeight: "bold",
+    fontWeight: "normal",
     borderBottom: "1px solid #ddd",
     textAlign: "left",
   },
   cell: {
     padding: "10px 15px",
+    fontSize: "14px",
     borderBottom: "1px solid #ddd",
     textAlign: "left",
   },

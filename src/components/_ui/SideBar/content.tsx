@@ -79,7 +79,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: "250px",
     backgroundColor: "#e0ebf5",
     padding: "10px",
-    height: "calc(100vh - 70px)",
+    height: "calc(100vh)",
   },
   list: {
     listStyleType: "none" as const,

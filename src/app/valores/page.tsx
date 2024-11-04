@@ -7,7 +7,7 @@ export default function Registro() {
         display: "flex",
         flexDirection: "column",
         gap: "20px",
-        width: "90%",
+        width: "85%",
         marginTop: "650px",
         marginLeft: "150px",
       }}
@@ -15,7 +15,7 @@ export default function Registro() {
       <div>
         <CadastroForm />
       </div>
-      <div style={{ display: "flex", maxWidth: "1075px" }}>
+      <div style={{ display: "flex", maxWidth: "1010px" }}>
         <div style={{ flex: 1, padding: 0 }}>
           <ValoresTable />
         </div>
