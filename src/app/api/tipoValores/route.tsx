@@ -6,8 +6,9 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const result = await sql`
-        select * from tipovalores;
-    `;
+        select * from tipovalores
+        order by id_tipovalores
+        `;
     return NextResponse.json(result.rows);
   } catch (error) {
     console.error("Erro ao buscar registros:", error);

@@ -3,19 +3,19 @@
 import React, { useEffect, useState } from "react";
 
 interface Registro {
-  id_tipovalores: number;
-  descricao: string;
-  valor: number;
+  id_estacionamento_rotativo: number;
+  descricao_estacionamento_rotativo: string;
+  valor_estacionamento_rotativo: number;
 }
 
-export function TabelaRegistros() {
+export function TabelaValorRotativo() {
   const [registros, setRegistros] = useState<Registro[]>([]);
   const [editando, setEditando] = useState<number | null>(null);
   const [valoresEditados, setValoresEditados] = useState<Partial<Registro>>({});
 
   const fetchRegistros = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/tipoValores");
+      const response = await fetch("http://localhost:3000/api/valoresRotativo");
       const data = await response.json();
       setRegistros(data);
     } catch (error) {
@@ -28,10 +28,9 @@ export function TabelaRegistros() {
   }, []);
 
   const iniciarEdicao = (registro: Registro) => {
-    setEditando(registro.id_tipovalores);
+    setEditando(registro.id_estacionamento_rotativo);
     setValoresEditados({
-      descricao: registro.descricao,
-      valor: registro.valor,
+      valor_estacionamento_rotativo: registro.valor_estacionamento_rotativo,
     });
   };
 
@@ -40,26 +39,27 @@ export function TabelaRegistros() {
     setValoresEditados({});
   };
 
-  const salvarEdicao = async (id_tipovalores: number) => {
+  const salvarEdicao = async (id_estacionamento_rotativo: number) => {
     const novoRegistro = {
-      id_tipovalores: id_tipovalores,
+      id_estacionamento_rotativo: id_estacionamento_rotativo,
       ...valoresEditados,
     };
 
     try {
-      console.log("TO aqui caralho", JSON.stringify(novoRegistro));
-      const response = await fetch("http://localhost:3000/api/tipoValores", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "http://localhost:3000/api/valoresRotativo",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(novoRegistro),
         },
-        body: JSON.stringify(novoRegistro),
-      });
+      );
 
       if (response.ok) {
         alert("Registro atualizado com sucesso!");
-        fetchRegistros(); // Recarrega a lista de registros após o update
-        console.log("Cheguei");
+        window.location.reload(); // Recarrega a página após o update
       } else {
         alert("Erro ao atualizar o registro.");
       }
@@ -72,27 +72,6 @@ export function TabelaRegistros() {
     }
   };
 
-  const excluirRegistro = async (id_tipovalores: number) => {
-    try {
-      const response = await fetch("http://localhost:3000/api/tipoValores", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id_tipovalores }),
-      });
-
-      if (response.ok) {
-        alert("Registro excluído com sucesso!");
-        fetchRegistros(); // Recarregar a lista de registros
-      } else {
-        console.error("Erro ao excluir registro:", await response.json());
-      }
-    } catch (error) {
-      console.error("Erro ao excluir registro:", error);
-    }
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setValoresEditados((prev) => ({ ...prev, [name]: value }));
@@ -100,53 +79,55 @@ export function TabelaRegistros() {
 
   return (
     <div style={styles.tableContainer}>
+      <h2 style={styles.title}>Rotativo</h2>
       <table style={styles.table}>
         <thead>
           <tr>
             <th style={styles.headerCell}>Descrição</th>
             <th style={styles.headerCell}>Valor</th>
+            <th style={styles.headerCell}>Ações</th>
           </tr>
         </thead>
         <tbody>
           {Array.isArray(registros) && registros.length > 0 ? (
             registros.map((registro) => (
               <tr
-                key={registro.id_tipovalores}
+                key={registro.id_estacionamento_rotativo}
                 style={
-                  editando === registro.id_tipovalores ? styles.editRow : {}
+                  editando === registro.id_estacionamento_rotativo
+                    ? styles.editRow
+                    : {}
                 }
               >
+                {/* Exibe a descrição como um texto não editável */}
                 <td style={styles.cell}>
-                  {editando === registro.id_tipovalores ? (
+                  {registro.descricao_estacionamento_rotativo}
+                </td>
+
+                {/* Campo de valor editável */}
+                <td style={styles.cell}>
+                  {editando === registro.id_estacionamento_rotativo ? (
                     <input
                       type="text"
-                      name="nome"
-                      value={valoresEditados.descricao || ""}
+                      name="valor_estacionamento_rotativo"
+                      value={
+                        valoresEditados.valor_estacionamento_rotativo || ""
+                      }
                       onChange={handleInputChange}
                       style={styles.input}
                     />
                   ) : (
-                    registro.descricao
+                    registro.valor_estacionamento_rotativo
                   )}
                 </td>
+
                 <td style={styles.cell}>
-                  {editando === registro.id_tipovalores ? (
-                    <input
-                      type="text"
-                      name="cpf"
-                      value={valoresEditados.valor || ""}
-                      onChange={handleInputChange}
-                      style={styles.input}
-                    />
-                  ) : (
-                    registro.valor
-                  )}
-                </td>
-                <td style={styles.cell}>
-                  {editando === registro.id_tipovalores ? (
+                  {editando === registro.id_estacionamento_rotativo ? (
                     <>
                       <button
-                        onClick={() => salvarEdicao(registro.id_tipovalores)}
+                        onClick={() =>
+                          salvarEdicao(registro.id_estacionamento_rotativo)
+                        }
                         style={styles.saveButton}
                       >
                         Salvar
@@ -159,26 +140,22 @@ export function TabelaRegistros() {
                       </button>
                     </>
                   ) : (
-                    <>
-                      <button
-                        onClick={() => iniciarEdicao(registro)}
-                        style={styles.editButton}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => excluirRegistro(registro.id_tipovalores)}
-                        style={styles.deleteButton}
-                      >
-                        Excluir
-                      </button>
-                    </>
+                    <button
+                      onClick={() => iniciarEdicao(registro)}
+                      style={styles.editButton}
+                    >
+                      Editar
+                    </button>
                   )}
                 </td>
               </tr>
             ))
           ) : (
-            <tr></tr>
+            <tr>
+              <td colSpan={3} style={styles.cell}>
+                Nenhum registro encontrado.
+              </td>
+            </tr>
           )}
         </tbody>
       </table>
@@ -189,6 +166,9 @@ export function TabelaRegistros() {
 const styles: { [key: string]: React.CSSProperties } = {
   tableContainer: {
     width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   table: {
     width: "100%",
@@ -242,12 +222,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: "pointer",
     marginRight: "5px",
   },
-  deleteButton: {
-    backgroundColor: "#f44336",
-    color: "white",
-    padding: "5px 10px",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
+  title: {
+    fontSize: "24px",
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: "20px",
   },
 };

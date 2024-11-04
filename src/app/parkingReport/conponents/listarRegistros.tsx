@@ -15,7 +15,7 @@ interface Registro {
 
 // Função para formatar data e hora
 const formatDateTime = (dateTime: string | null) => {
-  if (!dateTime) return "Ainda no estacionamento";
+  if (!dateTime) return null; // Retorna null se não houver data/hora
   const date = new Date(dateTime);
   return new Intl.DateTimeFormat("pt-BR", {
     dateStyle: "short",
@@ -71,10 +71,15 @@ export function TabelaRegistros() {
   };
 
   const salvarEdicao = async (id: number) => {
+    // Formatar data_saida para o backend, se necessário
+    const dataSaida = valoresEditados.data_saida
+      ? new Date(valoresEditados.data_saida).toISOString() // Formato ISO para compatibilidade
+      : "";
+
     const novoRegistro = {
       registro_id: id,
-      placa: valoresEditados.placa || "",
-      data_saida: valoresEditados.data_saida || "",
+      placa: valoresEditados.placa || "", // Garanta que você esteja capturando a placa
+      data_saida: dataSaida,
     };
 
     console.log("Enviando dados para atualização:", novoRegistro);
@@ -103,11 +108,6 @@ export function TabelaRegistros() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setValoresEditados((prev) => ({ ...prev, [name]: value }));
-  };
-
   return (
     <div style={styles.tableContainer}>
       <table style={styles.table}>
@@ -119,6 +119,7 @@ export function TabelaRegistros() {
             <th style={styles.headerCell}>Telefone</th>
             <th style={styles.headerCell}>Entrada</th>
             <th style={styles.headerCell}>Saída</th>
+            <th style={styles.headerCell}>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -138,13 +139,24 @@ export function TabelaRegistros() {
                   {editando === registro.id ? (
                     <input
                       type="datetime-local"
-                      name="data_saida"
-                      value={valoresEditados.data_saida || ""}
-                      onChange={handleInputChange}
+                      placeholder="Data/Hora Saída"
                       style={styles.inputField}
+                      value={valoresEditados.data_saida || ""}
+                      onChange={(e) => {
+                        const newValue = e.target.value;
+                        console.log("Novo valor de data_saida:", newValue);
+                        setValoresEditados({
+                          ...valoresEditados,
+                          data_saida: newValue,
+                        });
+                      }}
                     />
-                  ) : (
+                  ) : formatDateTime(registro.data_saida) ? (
                     formatDateTime(registro.data_saida)
+                  ) : (
+                    <span style={{ color: "red" }}>
+                      Ainda no estacionamento
+                    </span>
                   )}
                 </td>
 
@@ -179,7 +191,7 @@ export function TabelaRegistros() {
             ))
           ) : (
             <tr>
-              <td style={styles.cell} colSpan={5}>
+              <td style={styles.cell} colSpan={7}>
                 Nenhum registro encontrado.
               </td>
             </tr>

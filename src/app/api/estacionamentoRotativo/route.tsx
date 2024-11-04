@@ -1,25 +1,28 @@
-// src/app/api/registros/route.ts
-
 import { sql } from "@vercel/postgres";
 import { NextResponse } from "next/server";
 
+// Definindo a interface para o registro
+interface RegistroRotativo {
+  id_rotativo: number;
+  placa_rotativo: string;
+  cor_rotativo: string;
+  modelo_rotativo: string;
+  hora_entrada_rotativo: string;
+  hora_saida_rotativo: string | null;
+}
+
 export async function GET() {
   try {
-    const result = await sql`
+    // Tipagem explícita para o tipo de `result.rows`
+    const result = await sql<RegistroRotativo[]>`
       SELECT 
-      regEsta.id, 
-      pessoa_id, 
-      nome, 
-      telefone, 
-      veiculo_id, 
-      placa, 
-      modelo, 
-      data_entrada, 
-      data_saida 
-      FROM registros_estacionamento as regEsta
-      LEFT JOIN veiculos ON veiculos.id = veiculo_id 
-      LEFT JOIN pessoas ON pessoas.id = pessoa_id
-      order by regEsta.id;
+        id_rotativo, 
+        placa_rotativo, 
+        cor_rotativo, 
+        modelo_rotativo, 
+        hora_entrada_rotativo, 
+        hora_saida_rotativo 
+      FROM estacionamento_rotativo
     `;
     return NextResponse.json(result.rows);
   } catch (error) {
@@ -30,21 +33,26 @@ export async function GET() {
     );
   }
 }
+
 export async function POST(request: Request) {
   try {
-    const { placa, dataEntrada } = await request.json();
+    const {
+      placa_rotativo,
+      modelo_rotativo,
+      cor_rotativo,
+      hora_entrada_rotativo,
+    }: RegistroRotativo = await request.json();
 
     console.log("Dados recebidos para criação:", {
-      placa,
-      dataEntrada,
+      placa_rotativo,
+      modelo_rotativo,
+      cor_rotativo,
+      hora_entrada_rotativo,
     });
 
     const insertResult = await sql`
-          INSERT INTO public.registros_estacionamento (veiculo_id, data_entrada)
-          VALUES (
-                (SELECT id FROM public.veiculos WHERE placa ILIKE ${placa}),
-                ${dataEntrada}
-                );
+      INSERT INTO estacionamento_rotativo (placa_rotativo, modelo_rotativo, cor_rotativo, hora_entrada_rotativo)
+      VALUES (${placa_rotativo}, ${modelo_rotativo}, ${cor_rotativo}, ${hora_entrada_rotativo})
     `;
 
     console.log("Resultado da inserção:", insertResult);
@@ -62,14 +70,15 @@ export async function POST(request: Request) {
 // Função para atualizar um registro
 export async function PUT(request: Request) {
   try {
-    const { data_saida, registro_id } = await request.json();
+    const { hora_saida_rotativo, id_rotativo }: Partial<RegistroRotativo> =
+      await request.json();
 
     console.log("Dados recebidos para atualização:", {
-      data_saida,
-      registro_id,
+      hora_saida_rotativo,
+      id_rotativo,
     });
 
-    if (!data_saida || !registro_id) {
+    if (!hora_saida_rotativo || !id_rotativo) {
       return NextResponse.json(
         { error: "Dados incompletos para atualização" },
         { status: 400 },
@@ -77,9 +86,9 @@ export async function PUT(request: Request) {
     }
 
     const updateResult = await sql`
-      UPDATE registros_estacionamento 
-      SET data_saida = ${data_saida}
-      WHERE id = ${registro_id}
+      UPDATE public.estacionamento_rotativo
+      SET hora_saida_rotativo = ${hora_saida_rotativo}
+      WHERE id_rotativo = ${id_rotativo};
     `;
 
     console.log("Resultado do UPDATE:", updateResult);

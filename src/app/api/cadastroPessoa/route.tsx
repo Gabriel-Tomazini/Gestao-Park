@@ -60,7 +60,8 @@ export async function POST(request: Request) {
 // Função para atualizar um registro
 export async function PUT(request: Request) {
   try {
-    const { id, nome, cpf, telefone, endereco } = await request.json();
+    const { id, nome, cpf, telefone, endereco, valores_id } =
+      await request.json();
 
     console.log("Dados recebidos para atualização:", {
       id,
@@ -68,9 +69,10 @@ export async function PUT(request: Request) {
       cpf,
       telefone,
       endereco,
+      valores_id,
     });
 
-    if (!id || !nome || !cpf || !telefone || !endereco) {
+    if (!id || !nome || !cpf || !telefone || !endereco || !valores_id) {
       return NextResponse.json(
         { error: "Dados incompletos para atualização" },
         { status: 400 },
@@ -79,7 +81,7 @@ export async function PUT(request: Request) {
 
     const updateResult = await sql`
       UPDATE pessoas 
-      SET nome = ${nome}, cpf = ${cpf}, telefone = ${telefone}, endereco = ${endereco}
+      SET nome = ${nome}, cpf = ${cpf}, telefone = ${telefone}, endereco = ${endereco}, valores_id = ${valores_id}
       WHERE id = ${id}
     `;
 

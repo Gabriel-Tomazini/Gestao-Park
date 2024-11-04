@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { TabelaMensalidades } from "./components/listaMensalidades"; // Verifique o caminho correto para o arquivo listarPessoa
-import { TabelaValorRotativo } from "./components/listaValoresRotativo"; // Verifique o caminho correto para o arquivo listarPessoa
+import { TabelaRegistros } from "./conponents/listarRegistros"; // Corrija o caminho para o seu componente de tabela, se necessário
 
-export default function CadastroForm() {
-  const [descricao, setDescricao] = useState("");
-  const [valor, setValor] = useState("");
+// Formulário para Registro de Entrada e Saída
+export default function RegistroEntradaSaidaForm() {
+  const [placa_rotativo, setPlaca] = useState("");
+  const [modelo_rotativo, setModelo] = useState("");
+  const [hora_entrada_rotativo, setHoraEntrada] = useState("");
+  const [cor_rotativo, setCor] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -14,18 +16,27 @@ export default function CadastroForm() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/api/tipoValores", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "http://localhost:3000/api/estacionamentoRotativo",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            placa_rotativo: placa_rotativo,
+            modelo_rotativo: modelo_rotativo,
+            cor_rotativo: cor_rotativo,
+            hora_entrada_rotativo: hora_entrada_rotativo,
+          }),
         },
-        body: JSON.stringify({ descricao, valor }),
-      });
+      );
 
       if (response.ok) {
         alert("Cadastro realizado com sucesso!");
-        setDescricao("");
-        setValor("");
+        setPlaca("");
+        setModelo("");
+        setHoraEntrada("");
       } else {
         alert("Erro ao realizar o cadastro. Tente novamente.");
       }
@@ -39,51 +50,57 @@ export default function CadastroForm() {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.title}>Cadastro de mansilidade</h2>
+      <h2 style={styles.title}>Registrar de Entrada de Veículos</h2>
       <form style={styles.form} onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Descrição"
+          placeholder="Placa"
           style={styles.input}
-          value={descricao}
-          onChange={(e) => setDescricao(e.target.value)}
+          value={placa_rotativo}
+          onChange={(e) => setPlaca(e.target.value)}
           required
         />
         <input
           type="text"
-          placeholder="Valor"
+          placeholder="Modelo"
           style={styles.input}
-          value={valor}
-          onChange={(e) => setValor(e.target.value)}
+          value={modelo_rotativo}
+          onChange={(e) => setModelo(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Cor"
+          style={styles.input}
+          value={cor_rotativo}
+          onChange={(e) => setCor(e.target.value)}
+          required
+        />
+        <input
+          type="datetime-local"
+          placeholder="Data/Hora Entrada"
+          style={styles.input}
+          value={hora_entrada_rotativo}
+          onChange={(e) => setHoraEntrada(e.target.value)}
           required
         />
         <button type="submit" style={styles.button} disabled={loading}>
           {loading ? "Cadastrando..." : "Cadastrar"}
         </button>
       </form>
-      <div style={styles.footerText}>Preencha todos os campos</div>
     </div>
   );
 }
 
-function ValoresTable() {
-  // Teste básico para verificar se o componente está sendo renderizado
+// Componente para exibir a Tabela de Veículos
+function VehicleTable() {
   return (
     <div style={styles.containerRegistro}>
-      <TabelaMensalidades />
+      <TabelaRegistros />
     </div>
   );
 }
 
-function ValoresRotativos() {
-  // Teste básico para verificar se o componente está sendo renderizado
-  return (
-    <div style={styles.containerRegistro}>
-      <TabelaValorRotativo />
-    </div>
-  );
-}
-
+// Estilos do componente
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
     display: "flex",
@@ -130,12 +147,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: "pointer",
     transition: "background-color 0.3s",
   },
-  footerText: {
-    marginTop: "20px",
-    fontSize: "16px",
-    color: "#888",
-    textAlign: "center",
-  },
   containerRegistro: {
     display: "flex",
     flexDirection: "column",
@@ -150,4 +161,5 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-export { CadastroForm, ValoresTable, ValoresRotativos };
+// Exportando os componentes
+export { RegistroEntradaSaidaForm, VehicleTable };

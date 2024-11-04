@@ -3,24 +3,19 @@
 import React, { useEffect, useState } from "react";
 
 interface Registro {
-  id: number;
-  nome: string;
-  cpf: string;
-  telefone: string;
-  endereco: string;
+  id_tipovalores: number;
   descricao: string;
   valor: number;
-  valores_id: number;
 }
 
-export function TabelaRegistros() {
+export function TabelaMensalidades() {
   const [registros, setRegistros] = useState<Registro[]>([]);
   const [editando, setEditando] = useState<number | null>(null);
   const [valoresEditados, setValoresEditados] = useState<Partial<Registro>>({});
 
   const fetchRegistros = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/cadastroPessoa");
+      const response = await fetch("http://localhost:3000/api/tipoValores");
       const data = await response.json();
       setRegistros(data);
     } catch (error) {
@@ -32,27 +27,12 @@ export function TabelaRegistros() {
     fetchRegistros();
   }, []);
 
-  const formatarTelefone = (telefone: string) => {
-    const apenasNumeros = telefone.replace(/\D/g, "");
-    return apenasNumeros.replace(
-      /(\d{2})(\d{1})(\d{4})(\d{4})/,
-      "($1) $2 $3-$4",
-    );
-  };
-
-  const formatarCPF = (cpf: string) => {
-    const apenasNumeros = cpf.replace(/\D/g, "");
-    return apenasNumeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-  };
-
   const iniciarEdicao = (registro: Registro) => {
-    setEditando(registro.id);
+    setEditando(registro.id_tipovalores);
     setValoresEditados({
-      nome: registro.nome,
-      cpf: registro.cpf,
-      telefone: registro.telefone,
-      endereco: registro.endereco,
-      valores_id: registro.valores_id,
+      descricao: registro.descricao,
+      valor: registro.valor,
+      id_tipovalores: registro.id_tipovalores,
     });
   };
 
@@ -61,14 +41,15 @@ export function TabelaRegistros() {
     setValoresEditados({});
   };
 
-  const salvarEdicao = async (id: number) => {
+  const salvarEdicao = async (id_tipovalores: number) => {
     const novoRegistro = {
-      id: id,
+      id_tipovalores: id_tipovalores,
       ...valoresEditados,
     };
 
     try {
-      const response = await fetch("http://localhost:3000/api/cadastroPessoa", {
+      console.log("TO aqui caralho", JSON.stringify(novoRegistro));
+      const response = await fetch("http://localhost:3000/api/tipoValores", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -92,14 +73,14 @@ export function TabelaRegistros() {
     }
   };
 
-  const excluirRegistro = async (id: number) => {
+  const excluirRegistro = async (id_tipovalores: number) => {
     try {
-      const response = await fetch("http://localhost:3000/api/cadastroPessoa", {
+      const response = await fetch("http://localhost:3000/api/tipoValores", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ id_tipovalores }),
       });
 
       if (response.ok) {
@@ -120,14 +101,12 @@ export function TabelaRegistros() {
 
   return (
     <div style={styles.tableContainer}>
+      <h2 style={styles.title}>Mensalidade</h2>
       <table style={styles.table}>
         <thead>
           <tr>
-            <th style={styles.headerCell}>Nome</th>
-            <th style={styles.headerCell}>CPF</th>
-            <th style={styles.headerCell}>Telefone</th>
-            <th style={styles.headerCell}>Endereço</th>
-            <th style={styles.headerCell}>Tipo Valor</th>
+            <th style={styles.headerCell}>Código</th>
+            <th style={styles.headerCell}>Descrição</th>
             <th style={styles.headerCell}>Valor</th>
             <th style={styles.headerCell}>Ações</th>
           </tr>
@@ -136,83 +115,43 @@ export function TabelaRegistros() {
           {Array.isArray(registros) && registros.length > 0 ? (
             registros.map((registro) => (
               <tr
-                key={registro.id}
-                style={editando === registro.id ? styles.editRow : {}}
+                key={registro.id_tipovalores}
+                style={
+                  editando === registro.id_tipovalores ? styles.editRow : {}
+                }
               >
+                <td style={styles.cell}>{registro.id_tipovalores}</td>
                 <td style={styles.cell}>
-                  {editando === registro.id ? (
+                  {editando === registro.id_tipovalores ? (
                     <input
                       type="text"
                       name="nome"
-                      value={valoresEditados.nome || ""}
+                      value={valoresEditados.descricao || ""}
                       onChange={handleInputChange}
                       style={styles.input}
                     />
                   ) : (
-                    registro.nome
+                    registro.descricao
                   )}
                 </td>
                 <td style={styles.cell}>
-                  {editando === registro.id ? (
+                  {editando === registro.id_tipovalores ? (
                     <input
                       type="text"
                       name="cpf"
-                      value={valoresEditados.cpf || ""}
+                      value={valoresEditados.valor || ""}
                       onChange={handleInputChange}
                       style={styles.input}
                     />
                   ) : (
-                    formatarCPF(registro.cpf)
+                    registro.valor
                   )}
                 </td>
                 <td style={styles.cell}>
-                  {editando === registro.id ? (
-                    <input
-                      type="text"
-                      name="telefone"
-                      value={valoresEditados.telefone || ""}
-                      onChange={handleInputChange}
-                      style={styles.input}
-                    />
-                  ) : (
-                    formatarTelefone(registro.telefone)
-                  )}
-                </td>
-                <td style={styles.cell}>
-                  {editando === registro.id ? (
-                    <input
-                      type="text"
-                      name="Endereço"
-                      value={valoresEditados.endereco || ""}
-                      onChange={handleInputChange}
-                      style={styles.input}
-                    />
-                  ) : (
-                    registro.endereco
-                  )}
-                </td>
-                <td style={styles.cell}>
-                  {editando === registro.id ? (
-                    <input
-                      type="text"
-                      name="valores_id"
-                      value={valoresEditados.valores_id || ""}
-                      onChange={handleInputChange}
-                      style={styles.input}
-                    />
-                  ) : (
-                    registro.valores_id
-                  )}
-                </td>
-                <td style={styles.cell}>
-                  {registro.valor != null ? registro.valor : "Não informado"}
-                </td>
-
-                <td style={styles.cell}>
-                  {editando === registro.id ? (
+                  {editando === registro.id_tipovalores ? (
                     <>
                       <button
-                        onClick={() => salvarEdicao(registro.id)}
+                        onClick={() => salvarEdicao(registro.id_tipovalores)}
                         style={styles.saveButton}
                       >
                         Salvar
@@ -233,7 +172,7 @@ export function TabelaRegistros() {
                         Editar
                       </button>
                       <button
-                        onClick={() => excluirRegistro(registro.id)}
+                        onClick={() => excluirRegistro(registro.id_tipovalores)}
                         style={styles.deleteButton}
                       >
                         Excluir
@@ -255,6 +194,10 @@ export function TabelaRegistros() {
 const styles: { [key: string]: React.CSSProperties } = {
   tableContainer: {
     width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "0px",
   },
   table: {
     width: "100%",
@@ -315,5 +258,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
+  },
+  title: {
+    fontSize: "24px",
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: "20px",
   },
 };

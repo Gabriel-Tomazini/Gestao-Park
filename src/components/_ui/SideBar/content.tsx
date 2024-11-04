@@ -24,6 +24,9 @@ const SideMenu = () => {
   const pageValores = () => {
     router.push(AppUtils.VALORES_PATH);
   };
+  const pageRotativ = () => {
+    router.push(AppUtils.ROTATIVO_PATH);
+  };
 
   return (
     <aside style={styles.menu}>
@@ -40,7 +43,12 @@ const SideMenu = () => {
         </li>
         <li style={styles.listItem}>
           <button style={styles.button} onClick={pageParkingReport}>
-            Entrada e saída
+            Mensalistas
+          </button>
+        </li>
+        <li style={styles.listItem}>
+          <button style={styles.button} onClick={pageRotativ}>
+            Rotativo
           </button>
         </li>
         <li style={styles.listItem}>

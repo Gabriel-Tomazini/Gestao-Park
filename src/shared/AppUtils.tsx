@@ -7,4 +7,5 @@ export class AppUtils {
   public static PARKINGREPORT_PATH = "/parkingReport";
   public static LISTACARRO_PATH = "/listarCarros";
   public static VALORES_PATH = "/valores";
+  public static ROTATIVO_PATH = "/rotativo";
 }
