@@ -72,3 +72,38 @@ export async function DELETE(request: Request) {
     );
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const { id_tipovalores, valor, descricao } = await request.json();
+
+    console.log("Dados recebidos para atualização:", {
+      id_tipovalores,
+      valor,
+      descricao,
+    });
+
+    if (!id_tipovalores) {
+      return NextResponse.json(
+        { error: "Dados incompletos para atualização" },
+        { status: 400 },
+      );
+    }
+
+    const updateResult = await sql`
+      UPDATE tipovalores 
+      SET valor = ${valor}, descricao = ${descricao}
+      WHERE id_tipovalores = ${id_tipovalores}
+    `;
+
+    console.log("Resultado do UPDATE:", updateResult);
+
+    return NextResponse.json({ message: "Registro atualizado com sucesso" });
+  } catch (error) {
+    console.error("Erro ao atualizar registro:", error);
+    return NextResponse.json(
+      { error: "Erro ao atualizar registro" },
+      { status: 500 },
+    );
+  }
+}

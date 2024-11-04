@@ -125,7 +125,7 @@ export function TabelaMensalidades() {
                   {editando === registro.id_tipovalores ? (
                     <input
                       type="text"
-                      name="nome"
+                      name="descricao"
                       value={valoresEditados.descricao || ""}
                       onChange={handleInputChange}
                       style={styles.input}
@@ -138,7 +138,7 @@ export function TabelaMensalidades() {
                   {editando === registro.id_tipovalores ? (
                     <input
                       type="text"
-                      name="cpf"
+                      name="valor"
                       value={valoresEditados.valor || ""}
                       onChange={handleInputChange}
                       style={styles.input}
