@@ -1,0 +1,50 @@
+name: Executar Testes Cypress
+
+on:
+  push:
+    branches:
+      - main # Ou altere para a branch que deseja monitorar
+  pull_request:
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20" # Use a versão do Node.js que seu projeto requer
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Iniciar o servidor de desenvolvimento
+        run: npm run dev &
+        env:
+          CI: true
+
+      - name: Esperar o servidor iniciar
+        run: npx wait-on http://localhost:3000
+
+      - name: Executar testes Cypress
+        run: npx cypress run --spec "cypress/e2e/estacionamento/cadastroVeiculo.cy.js"
+        env:
+          CI: true
+
+      - name: Fazer upload dos vídeos de teste
+        uses: actions/upload-artifact@v3
+        if: always() # Sempre fazer upload, mesmo se o teste falhar
+        with:
+          name: cypress-videos
+          path: cypress/videos
+
+      - name: Fazer upload das capturas de tela dos testes
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots

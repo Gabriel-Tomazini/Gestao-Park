@@ -4,9 +4,10 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
     "eslint:recommended",
-    "prettier"
+    "prettier",
+    "plugin:cypress/recommended" // Adiciona o Cypress
   ],
-  "plugins": ["@typescript-eslint", "react", "prettier"],
+  "plugins": ["@typescript-eslint", "react", "prettier", "cypress"], // Adiciona o Cypress aos plugins
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2020,
@@ -14,6 +15,11 @@
     "ecmaFeatures": {
       "jsx": true
     }
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "cypress/globals": true // Define o ambiente para o Cypress
   },
   "rules": {
     "prettier/prettier": [
@@ -24,7 +30,7 @@
       }
     ],
     "quotes": "off",
-    "linebreak-style": ["error", "windows"], // Define quebras de linha como CRLF
+    "linebreak-style": ["error", "windows"],
     "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/explicit-function-return-type": [
       "warn",
