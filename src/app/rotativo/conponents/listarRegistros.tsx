@@ -53,6 +53,7 @@ export function TabelaRegistros() {
     try {
       const response = await fetch(
         "http://localhost:3000/api/valoresEstacionamentoRotativo",
+        { cache: "reload" },
       );
       const data = await response.json();
 

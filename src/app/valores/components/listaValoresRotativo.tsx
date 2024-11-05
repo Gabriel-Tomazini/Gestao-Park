@@ -15,7 +15,10 @@ export function TabelaValorRotativo() {
 
   const fetchRegistros = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/valoresRotativo");
+      const response = await fetch(
+        "http://localhost:3000/api/valoresRotativo",
+        { cache: "reload" },
+      );
       const data = await response.json();
       setRegistros(data);
     } catch (error) {
