@@ -1,6 +1,6 @@
 const baseApiUrl =
   process.env.NEXT_PUBLIC_ENV === "production"
-    ? "https://estacionamento-rho.vercel.app/api"
+    ? "https://estacionamento-rho.vercel.app"
     : "http://localhost:3000/api";
 
 export const apiUrls = {
