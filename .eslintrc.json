@@ -7,7 +7,12 @@
     "prettier",
     "plugin:cypress/recommended" // Adiciona o Cypress
   ],
-  "plugins": ["@typescript-eslint", "react", "prettier", "cypress"], // Adiciona o Cypress aos plugins
+  "plugins": [
+    "@typescript-eslint",
+    "react",
+    "prettier",
+    "cypress" // Adiciona o Cypress aos plugins
+  ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2020,
@@ -19,7 +24,8 @@
   "env": {
     "browser": true,
     "node": true,
-    "cypress/globals": true // Define o ambiente para o Cypress
+    "cypress/globals": true, // Define o ambiente para o Cypress
+    "jest": true // Caso esteja usando Jest também
   },
   "rules": {
     "prettier/prettier": [
