@@ -16,12 +16,14 @@ const styles: { [key: string]: CSSProperties } = {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    height: "80vh",
-    width: "70%",
+    height: "80vh", // Ajusta a altura do contêiner para 80% da altura da tela
+    width: "70%", // Define a largura do contêiner
     padding: "20px",
     backgroundColor: "#E0EBF5",
     borderRadius: "8px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    maxHeight: "60vh", // Definindo altura máxima do contêiner para a tabela
+    overflowY: "auto", // Ativa a rolagem vertical caso o conteúdo ultrapasse a altura máxima
   },
 };
 

@@ -7,7 +7,7 @@ export default function Registro() {
         display: "flex",
         flexDirection: "column",
         gap: "20px",
-        marginTop: "650px",
+        marginTop: "525px",
         width: "90%",
         marginLeft: "10%",
       }}

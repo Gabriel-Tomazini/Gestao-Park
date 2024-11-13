@@ -20,7 +20,7 @@ export function TabelaRegistros() {
 
   const fetchRegistros = async () => {
     try {
-      const response = await fetch(apiUrls.veiculos);
+      const response = await fetch("http://localhost:3000/api/listaCarros");
       const data = await response.json();
       setRegistros(data);
     } catch (error) {
@@ -199,12 +199,6 @@ export function TabelaRegistros() {
                         style={styles.editButton}
                       >
                         Editar
-                      </button>
-                      <button
-                        onClick={() => excluirRegistro(registro.veiculo_id)}
-                        style={styles.deleteButton}
-                      >
-                        Excluir
                       </button>
                     </>
                   )}

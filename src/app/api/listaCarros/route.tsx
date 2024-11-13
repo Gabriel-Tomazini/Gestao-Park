@@ -10,6 +10,7 @@ export async function GET() {
       SELECT veiculos.id as veiculo_id, pessoas.id as pessoa_id, placa, modelo, cor, nome, telefone 
       FROM veiculos 
       LEFT JOIN pessoas ON pessoas.id = veiculos.pessoa_id
+      where "situacaoPessoa" = true
     `;
     return NextResponse.json(result.rows);
   } catch (error) {

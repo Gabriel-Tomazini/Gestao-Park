@@ -2,21 +2,28 @@ import { sql } from "@vercel/postgres";
 import { NextResponse } from "next/server";
 
 // Função para buscar registros
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const showInactive = searchParams.get("inativos") === "true";
+
   try {
     const result = await sql`
-          SELECT pessoas.id, 
-          nome, 
-          cpf,
-          telefone, 
-          endereco, 
-          pessoas.valores_id,
-          tipovalores.valor, 
-          tipovalores.descricao, 
-          tipovalores.id_tipovalores
-          FROM pessoas
-          left join tipovalores on tipovalores.id_tipovalores = pessoas.valores_id
-          `;
+      SELECT pessoas.id, 
+             nome, 
+             cpf,
+             telefone, 
+             endereco, 
+             pessoas.valores_id,
+             tipovalores.valor, 
+             tipovalores.descricao, 
+             tipovalores.id_tipovalores,
+             pessoas.pago,
+             pessoas."situacaoPessoa"
+      FROM pessoas
+      LEFT JOIN tipovalores ON tipovalores.id_tipovalores = pessoas.valores_id
+      WHERE ${showInactive} OR pessoas."situacaoPessoa" = true
+      ORDER BY pessoas.nome;
+    `;
     return NextResponse.json(result.rows);
   } catch (error) {
     console.error("Erro ao buscar registros:", error);
@@ -120,6 +127,49 @@ export async function DELETE(request: Request) {
     console.error("Erro ao excluir registro:", error);
     return NextResponse.json(
       { error: "Erro ao excluir registro" },
+      { status: 500 },
+    );
+  }
+}
+
+// Função para atualizar status de pagamento
+export async function PATCH(request: Request) {
+  try {
+    const { id, pago, toggleSituacao } = await request.json();
+
+    if (typeof pago === "boolean" && id) {
+      const updatePagoResult = await sql`
+        UPDATE pessoas 
+        SET pago = ${pago}
+        WHERE id = ${id}
+      `;
+      return NextResponse.json({
+        message: "Status de pagamento atualizado com sucesso",
+      });
+    }
+
+    if (toggleSituacao) {
+      const toggleStatusResult = await sql`
+        UPDATE pessoas
+        SET "situacaoPessoa" = NOT "situacaoPessoa"
+        WHERE id = ${id}
+        RETURNING "situacaoPessoa";
+      `;
+      const situacaoPessoa = toggleStatusResult.rows[0]?.situacaoPessoa;
+      return NextResponse.json({
+        message: "Status ativo/inativo atualizado com sucesso",
+        situacaoPessoa,
+      });
+    }
+
+    return NextResponse.json(
+      { error: "Dados incompletos para a operação" },
+      { status: 400 },
+    );
+  } catch (error) {
+    console.error("Erro ao atualizar status:", error);
+    return NextResponse.json(
+      { error: "Erro ao atualizar status" },
       { status: 500 },
     );
   }

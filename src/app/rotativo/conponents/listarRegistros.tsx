@@ -9,6 +9,7 @@ interface Registro {
   cor_rotativo: string;
   hora_entrada_rotativo: string;
   hora_saida_rotativo: string | null;
+  valor_rotativo: number | null;
 }
 
 interface ValoresEstacionamento {
@@ -24,6 +25,11 @@ const formatDateTime = (dateTime: string | null) => {
     dateStyle: "short",
     timeStyle: "short",
   }).format(date);
+};
+
+const formatarValor = (valor: number | null) => {
+  if (valor === null) return "-";
+  return `R$ ${valor.toFixed(2).replace(".", ",")}`;
 };
 
 // Função para calcular o valor com base no tempo de permanência
@@ -98,36 +104,54 @@ export function TabelaRegistros() {
   };
 
   const salvarEdicao = async (id: number) => {
-    const novoRegistro = {
-      id_rotativo: id,
-      placa_rotativo: valoresEditados.placa_rotativo || "",
-      hora_saida_rotativo: valoresEditados.hora_saida_rotativo || "",
-    };
+    // Encontra o registro atual para obter a hora de entrada
+    const registroAtual = registros.find((r) => r.id_rotativo === id);
+    const horaSaida = valoresEditados.hora_saida_rotativo || "";
 
-    try {
-      const response = await fetch(
-        "http://localhost:3000/api/estacionamentoRotativo",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(novoRegistro),
-        },
+    if (
+      registroAtual &&
+      valoresEstacionamento &&
+      registroAtual.hora_entrada_rotativo
+    ) {
+      const valorAPagar = calcularValor(
+        registroAtual.hora_entrada_rotativo,
+        horaSaida,
+        valoresEstacionamento,
       );
 
-      if (response.ok) {
-        alert("Registro atualizado com sucesso!");
-        fetchRegistros();
-      } else {
+      const novoRegistro = {
+        id_rotativo: id,
+        hora_saida_rotativo: horaSaida,
+        valor_rotativo: valorAPagar,
+      };
+
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/estacionamentoRotativo",
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(novoRegistro),
+          },
+        );
+
+        if (response.ok) {
+          alert("Registro atualizado com sucesso!");
+          fetchRegistros(); // Atualiza a lista de registros
+        } else {
+          alert("Erro ao atualizar o registro.");
+        }
+      } catch (error) {
+        console.error("Erro ao enviar atualização:", error);
         alert("Erro ao atualizar o registro.");
+      } finally {
+        setEditando(null);
+        setValoresEditados({});
       }
-    } catch (error) {
-      console.error("Erro ao enviar atualização:", error);
-      alert("Erro ao atualizar o registro.");
-    } finally {
-      setEditando(null);
-      setValoresEditados({});
+    } else {
+      alert("Erro: Dados insuficientes para calcular o valor.");
     }
   };
 
@@ -180,15 +204,7 @@ export function TabelaRegistros() {
                   )
                 )}
               </td>
-              <td style={styles.cell}>
-                {registro.hora_saida_rotativo && valoresEstacionamento
-                  ? `R$ ${calcularValor(
-                      registro.hora_entrada_rotativo,
-                      registro.hora_saida_rotativo,
-                      valoresEstacionamento,
-                    ).toFixed(2)}`
-                  : "—"}
-              </td>
+              <td style={styles.cell}>{formatarValor(registro.valor_rotativo)}</td>
               <td style={styles.cell}>
                 {editando === registro.id_rotativo ? (
                   <>

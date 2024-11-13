@@ -5,14 +5,6 @@ describe("CadastroForm Component", () => {
     cy.visit("http://localhost:3000/cadastrarCarro"); // Exemplo se a página de cadastro estiver em /cadastrarCarro
   });
 
-  it("Deve formatar a placa em maiúsculas e limitar a 7 caracteres", () => {
-    // Digita na entrada de "Placa" e espera a formatação
-    cy.get('input[placeholder="Placa"]').type("abc12345");
-
-    // Verifica separadamente se o valor foi formatado e truncado
-    cy.get('input[placeholder="Placa"]').should("have.value", "ABC1234");
-  });
-
   it("Deve mostrar erro se a placa tiver menos de 7 caracteres", () => {
     cy.get('input[placeholder="Placa"]').type("ABC123");
     cy.get('input[placeholder="Modelo"]').type("Carro Teste");

@@ -9,6 +9,7 @@ interface RegistroRotativo {
   modelo_rotativo: string;
   hora_entrada_rotativo: string;
   hora_saida_rotativo: string | null;
+  valor_rotativo: number | null;
 }
 
 export async function GET() {
@@ -21,8 +22,10 @@ export async function GET() {
         cor_rotativo, 
         modelo_rotativo, 
         hora_entrada_rotativo, 
-        hora_saida_rotativo 
+        hora_saida_rotativo,
+        valor_rotativo
       FROM estacionamento_rotativo
+      ORDER BY id_rotativo
     `;
     return NextResponse.json(result.rows);
   } catch (error) {
@@ -70,15 +73,19 @@ export async function POST(request: Request) {
 // Função para atualizar um registro
 export async function PUT(request: Request) {
   try {
-    const { hora_saida_rotativo, id_rotativo }: Partial<RegistroRotativo> =
-      await request.json();
+    const {
+      hora_saida_rotativo,
+      id_rotativo,
+      valor_rotativo,
+    }: Partial<RegistroRotativo> = await request.json();
 
     console.log("Dados recebidos para atualização:", {
       hora_saida_rotativo,
       id_rotativo,
+      valor_rotativo,
     });
 
-    if (!hora_saida_rotativo || !id_rotativo) {
+    if (!hora_saida_rotativo || !id_rotativo || valor_rotativo === undefined) {
       return NextResponse.json(
         { error: "Dados incompletos para atualização" },
         { status: 400 },
@@ -87,7 +94,9 @@ export async function PUT(request: Request) {
 
     const updateResult = await sql`
       UPDATE public.estacionamento_rotativo
-      SET hora_saida_rotativo = ${hora_saida_rotativo}
+      SET 
+        hora_saida_rotativo = ${hora_saida_rotativo},
+        valor_rotativo = ${valor_rotativo}
       WHERE id_rotativo = ${id_rotativo};
     `;
 

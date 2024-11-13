@@ -7,12 +7,13 @@ import { TabelaRegistros } from "./conponents/listarRegistros"; // Corrigido o c
 export default function RegistroEntradaSaidaForm() {
   const [placa, setPlaca] = useState("");
   const [dataEntrada, setDataEntrada] = useState("");
-
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
+    setErrorMessage(""); // Resetar mensagem de erro
 
     try {
       const response = await fetch("http://localhost:3000/api/listaRegistro", {
@@ -27,12 +28,14 @@ export default function RegistroEntradaSaidaForm() {
         alert("Cadastro realizado com sucesso!");
         setPlaca("");
         setDataEntrada("");
+        window.location.reload();
       } else {
-        alert("Erro ao realizar o cadastro. Tente novamente.");
+        const errorData = await response.json();
+        setErrorMessage(errorData.error || "Erro ao realizar o cadastro.");
       }
     } catch (error) {
       console.error("Erro ao enviar o formulário:", error);
-      alert("Erro ao realizar o cadastro. Tente novamente.");
+      setErrorMessage("Erro de rede. Tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -40,7 +43,7 @@ export default function RegistroEntradaSaidaForm() {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.title}>Registrar de Entrada de Veículos</h2>
+      <h2 style={styles.title}>Registrar Entrada de Veículos</h2>
       <form style={styles.form} onSubmit={handleSubmit}>
         <input
           type="text"
@@ -49,7 +52,7 @@ export default function RegistroEntradaSaidaForm() {
           value={placa}
           onChange={(e) => setPlaca(e.target.value)}
           required
-        />{" "}
+        />
         <input
           type="datetime-local"
           placeholder="Data/Hora Entrada"
@@ -57,13 +60,11 @@ export default function RegistroEntradaSaidaForm() {
           value={dataEntrada}
           onChange={(e) => setDataEntrada(e.target.value)}
         />
-        <button type="submit" style={styles.button}>
-          Registrar
-        </button>
         <button type="submit" style={styles.button} disabled={loading}>
           {loading ? "Cadastrando..." : "Cadastrar"}
         </button>
       </form>
+      {errorMessage && <p style={styles.error}>{errorMessage}</p>}
     </div>
   );
 }
@@ -77,6 +78,7 @@ function VehicleTable() {
   );
 }
 
+// Estilos do componente
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
     display: "flex",
@@ -89,6 +91,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: "#E0EBF5",
     borderRadius: "8px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    marginTop: "-450px",
   },
   title: {
     fontSize: "24px",
@@ -123,20 +126,23 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: "pointer",
     transition: "background-color 0.3s",
   },
-  buttonHover: {
-    backgroundColor: "#357ABD",
+  error: {
+    color: "red",
+    fontSize: "14px",
+    marginTop: "10px",
   },
   containerRegistro: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
-    height: "80vh",
+    justifyContent: "flex-start",
     width: "90%",
     padding: "20px",
-    backgroundColor: "#E0EBF5",
+    backgroundColor: "#F5F9FD",
     borderRadius: "8px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    maxHeight: "70vh",
+    overflowY: "auto",
   },
 };
 

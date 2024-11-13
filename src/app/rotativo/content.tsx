@@ -37,6 +37,7 @@ export default function RegistroEntradaSaidaForm() {
         setPlaca("");
         setModelo("");
         setHoraEntrada("");
+        window.location.reload();
       } else {
         alert("Erro ao realizar o cadastro. Tente novamente.");
       }
@@ -113,6 +114,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: "#E0EBF5",
     borderRadius: "8px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    marginTop: "-350px",
   },
   title: {
     fontSize: "24px",
@@ -151,13 +153,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
-    height: "80vh",
+    justifyContent: "flex-start", // Ajusta para não centralizar, se necessário
     width: "90%",
     padding: "20px",
-    backgroundColor: "#E0EBF5",
+    backgroundColor: "#F5F9FD", // Alteração de fundo para destacar a área de registros
     borderRadius: "8px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    maxHeight: "70vh", // Limite de altura máxima
+    overflowY: "auto", // Adiciona rolagem vertical quando necessário
   },
 };
 
