@@ -151,7 +151,7 @@ export function TabelaRegistros() {
             <th style={styles.headerCell}>CPF</th>
             <th style={styles.headerCell}>Telefone</th>
             <th style={styles.headerCell}>Endereço</th>
-            <th style={styles.headerCell}>ID tipo valor</th>
+            <th style={styles.headerCell}>Tipo Mensalidade</th>
             <th style={styles.headerCell}>Tipo Valor</th>
             <th style={styles.headerCell}>Valor</th>
             <th style={styles.headerCell}>Ações</th>

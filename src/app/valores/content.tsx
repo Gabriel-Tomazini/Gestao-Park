@@ -26,6 +26,7 @@ export default function CadastroForm() {
         alert("Cadastro realizado com sucesso!");
         setDescricao("");
         setValor("");
+        window.location.reload();
       } else {
         alert("Erro ao realizar o cadastro. Tente novamente.");
       }

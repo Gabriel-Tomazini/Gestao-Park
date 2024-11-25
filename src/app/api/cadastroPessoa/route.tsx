@@ -48,8 +48,8 @@ export async function POST(request: Request) {
     });
 
     const insertResult = await sql`
-      INSERT INTO pessoas (nome, cpf, telefone, endereco, valores_id) 
-      VALUES (${nome}, ${cpf}, ${telefone}, ${endereco}, ${valores_id});
+      INSERT INTO pessoas (nome, cpf, telefone, endereco, valores_id,"situacaoPessoa") 
+      VALUES (${nome}, ${cpf}, ${telefone}, ${endereco}, ${valores_id}, true);
     `;
 
     console.log("Resultado da inserção:", insertResult);

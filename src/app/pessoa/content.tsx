@@ -11,6 +11,29 @@ export default function CadastroForm() {
   const [valores_id, setValoresId] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const formatCpf = (value: string) => {
+    const onlyNumbers = value.replace(/\D/g, "").slice(0, 11);
+    return onlyNumbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  };
+
+  const formatTelefone = (value: string) => {
+    const onlyNumbers = value.replace(/\D/g, "").slice(0, 11);
+    return onlyNumbers.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+  };
+
+  const handleCpfChange = (value: string) => {
+    setCpf(formatCpf(value));
+  };
+
+  const handleTelefoneChange = (value: string) => {
+    setTelefone(formatTelefone(value));
+  };
+
+  const handleValoresIdChange = (value: string) => {
+    const onlyNumbers = value.replace(/\D/g, "");
+    setValoresId(onlyNumbers);
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
@@ -30,6 +53,7 @@ export default function CadastroForm() {
         setCpf("");
         setTelefone("");
         setEndereco("");
+        setValoresId("");
         window.location.reload();
       } else {
         alert("Erro ao realizar o cadastro. Tente novamente.");
@@ -59,7 +83,7 @@ export default function CadastroForm() {
           placeholder="CPF"
           style={styles.input}
           value={cpf}
-          onChange={(e) => setCpf(e.target.value)}
+          onChange={(e) => handleCpfChange(e.target.value)}
           required
         />
         <input
@@ -67,7 +91,7 @@ export default function CadastroForm() {
           placeholder="Telefone"
           style={styles.input}
           value={telefone}
-          onChange={(e) => setTelefone(e.target.value)}
+          onChange={(e) => handleTelefoneChange(e.target.value)}
           required
         />
         <input
@@ -83,7 +107,7 @@ export default function CadastroForm() {
           placeholder="Tipo Valor"
           style={styles.input}
           value={valores_id}
-          onChange={(e) => setValoresId(e.target.value)}
+          onChange={(e) => handleValoresIdChange(e.target.value)}
           required
         />
         <button type="submit" style={styles.button} disabled={loading}>
@@ -96,7 +120,6 @@ export default function CadastroForm() {
 }
 
 function PessoaTable() {
-  // Teste básico para verificar se o componente está sendo renderizado
   return (
     <div style={styles.containerRegistro}>
       <TabelaRegistros />
@@ -155,14 +178,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "flex-start", // Ajusta para não centralizar, se necessário
+    justifyContent: "flex-start",
     width: "90%",
     padding: "20px",
-    backgroundColor: "#F5F9FD", // Alteração de fundo para destacar a área de registros
+    backgroundColor: "#F5F9FD",
     borderRadius: "8px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    maxHeight: "70vh", // Limite de altura máxima
-    overflowY: "auto", // Adiciona rolagem vertical quando necessário
+    maxHeight: "70vh",
+    overflowY: "auto",
   },
 };
 

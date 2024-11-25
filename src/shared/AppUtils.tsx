@@ -8,4 +8,5 @@ export class AppUtils {
   public static LISTACARRO_PATH = "/listarCarros";
   public static VALORES_PATH = "/valores";
   public static ROTATIVO_PATH = "/rotativo";
+  public static GRAFICOS_PATH = "/graficos"
 }

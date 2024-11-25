@@ -1,14 +1,47 @@
 import React, { useState } from "react";
 
 export default function CadastroForm() {
-  const [placa, setplaca] = useState("");
+  const [placa, setPlaca] = useState("");
   const [modelo, setModelo] = useState("");
   const [cor, setCor] = useState("");
   const [pessoa_id, setPessoaId] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const handlePlacaChange = (valor: string) => {
+    // Remove caracteres não alfanuméricos
+    const apenasTextoENumeros = valor.replace(/[^a-zA-Z0-9]/g, "");
+
+    // Formata para o padrão ABC1D23 (4 letras + 3 números)
+    const formatado = apenasTextoENumeros
+      .toUpperCase()
+      .replace(
+        /^([A-Z]{0,3})([A-Z]?)(\d{0,1})([A-Z]{0,1})(\d{0,3}).*$/,
+        "$1$2$3$4$5",
+      );
+
+    setPlaca(formatado);
+  };
+
+  const handlePessoaIdChange = (valor: string) => {
+    // Permite apenas números
+    const apenasNumeros = valor.replace(/[^0-9]/g, "");
+    setPessoaId(apenasNumeros);
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    // Validação final da placa
+    if (!/^[A-Z]{3}[A-Z]?\d[A-Z]?\d{2}$/.test(placa)) {
+      alert("A placa deve seguir o formato ABC1D23 (4 letras e 3 números).");
+      return;
+    }
+
+    if (!/^\d+$/.test(pessoa_id)) {
+      alert("O código do dono deve conter apenas números.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -22,7 +55,7 @@ export default function CadastroForm() {
 
       if (response.ok) {
         alert("Cadastro realizado com sucesso!");
-        setplaca("");
+        setPlaca("");
         setModelo("");
         setCor("");
         setPessoaId("");
@@ -43,10 +76,10 @@ export default function CadastroForm() {
       <form style={styles.form} onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Placa"
+          placeholder="Placa (Ex: ABC1D23)"
           style={styles.input}
           value={placa}
-          onChange={(e) => setplaca(e.target.value)}
+          onChange={(e) => handlePlacaChange(e.target.value)}
           required
         />
         <input
@@ -59,7 +92,7 @@ export default function CadastroForm() {
         />
         <input
           type="text"
-          placeholder="cor"
+          placeholder="Cor"
           style={styles.input}
           value={cor}
           onChange={(e) => setCor(e.target.value)}
@@ -67,10 +100,10 @@ export default function CadastroForm() {
         />
         <input
           type="text"
-          placeholder="Código do dono"
+          placeholder="Código do dono (Apenas números)"
           style={styles.input}
           value={pessoa_id}
-          onChange={(e) => setPessoaId(e.target.value)}
+          onChange={(e) => handlePessoaIdChange(e.target.value)}
           required
         />
         <button type="submit" style={styles.button} disabled={loading}>
@@ -116,28 +149,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: "100%",
     boxSizing: "border-box",
   },
-  inlineInputs: {
-    display: "flex",
-    gap: "10px",
-  },
-  smallInput: {
-    padding: "12px",
-    fontSize: "16px",
-    borderRadius: "6px",
-    border: "1px solid #ccc",
-    backgroundColor: "#fff",
-    width: "30%", // Reduzido para ocupar menos espaço
-    boxSizing: "border-box",
-  },
-  largeInput: {
-    padding: "12px",
-    fontSize: "16px",
-    borderRadius: "6px",
-    border: "1px solid #ccc",
-    backgroundColor: "#fff",
-    width: "70%", // Aumentado para ocupar mais espaço
-    boxSizing: "border-box",
-  },
   button: {
     padding: "12px",
     fontSize: "16px",
@@ -148,8 +159,5 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: "6px",
     cursor: "pointer",
     transition: "background-color 0.3s",
-  },
-  buttonHover: {
-    backgroundColor: "#357ABD",
   },
 };

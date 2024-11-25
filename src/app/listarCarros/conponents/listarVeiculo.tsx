@@ -63,7 +63,7 @@ export function TabelaRegistros() {
     };
 
     try {
-      const response = await fetch(apiUrls.veiculos, {
+      const response = await fetch("http://localhost:3000/api/listaCarros", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
